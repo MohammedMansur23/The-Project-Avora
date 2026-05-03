@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 
+
 const PRODUCTS = [
   { id: 1, name: 'Jollof Rice & Chicken', store: "Mama Tee's Kitchen", price: 1500, category: 'Food & Drinks', emoji: '🍲', sponsored: true },
   { id: 2, name: 'Ankara Crop Top', store: 'Campus Threads', price: 4500, category: 'Fashion', emoji: '👗', sponsored: true },

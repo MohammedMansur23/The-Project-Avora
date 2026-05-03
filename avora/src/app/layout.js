@@ -1,7 +1,7 @@
 import { Montserrat, Cormorant_Garamond } from 'next/font/google'
 import './globals.css'
 import Navbar from '../components/layout/Navbar'
-
+import { AuthProvider } from '../lib/AuthContext'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -24,8 +24,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${montserrat.variable} ${cormorant.variable}`}>
-        <Navbar />
-        {children}
+        <AuthProvider>
+          <Navbar />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   )
