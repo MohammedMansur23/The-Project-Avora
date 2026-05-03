@@ -45,12 +45,12 @@ export default function Home() {
         textAlign: 'center',
       }}>
         <p style={{
-          fontSize: '0.65rem',
+          fontSize: '0.75rem',
           letterSpacing: '0.3em',
           color: '#C9A84C',
           textTransform: 'uppercase',
           marginBottom: '1.5rem',
-        }}>University of Ilorin · Campus Marketplace</p>
+        }}>· Campus Marketplace ·</p>
         <h1 style={{
           fontFamily: 'Georgia, serif',
           fontSize: 'clamp(2.5rem, 6vw, 5rem)',
