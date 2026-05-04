@@ -2,6 +2,7 @@ import { Montserrat, Cormorant_Garamond } from 'next/font/google'
 import './globals.css'
 import Navbar from '../components/layout/Navbar'
 import { AuthProvider } from '../lib/AuthContext'
+import { CartProvider } from '../lib/CartContext'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -25,8 +26,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${montserrat.variable} ${cormorant.variable}`}>
         <AuthProvider>
-          <Navbar />
-          {children}
+          <CartProvider>
+            <Navbar />
+            {children}
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

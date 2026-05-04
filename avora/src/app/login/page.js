@@ -9,10 +9,15 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const getRedirect = () => {
+    const params = new URLSearchParams(window.location.search)
+    return params.get('redirect') || '/marketplace'
+  }
+
   useEffect(() => {
     handleRedirectResult().then(result => {
       if (result.success && result.user) {
-        window.location.href = '/marketplace'
+        window.location.href = getRedirect()
       }
     })
   }, [])
@@ -30,7 +35,7 @@ export default function Login() {
     setLoading(true)
     try {
       await signInWithEmailAndPassword(auth, form.email, form.password)
-      window.location.href = '/marketplace'
+      window.location.href = getRedirect()
     } catch (err) {
       if (err.code === 'auth/user-not-found') {
         setError('No account found with this email.')
@@ -140,7 +145,7 @@ export default function Login() {
             onClick={async () => {
               const result = await signInWithGoogle()
               if (result.success && result.user) {
-                window.location.href = '/marketplace'
+                window.location.href = getRedirect()
               }
             }}
             style={{

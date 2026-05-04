@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '../../lib/AuthContext'
+import { useCart } from '../../lib/CartContext'
 
 export default function Navbar() {
   const [query, setQuery] = useState('')
@@ -9,6 +10,7 @@ export default function Navbar() {
   const [wishlistOpen, setWishlistOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const { user, logout } = useAuth()
+  const { cart, wishlist, removeFromCart, toggleWishlist, cartTotal } = useCart()
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -103,111 +105,87 @@ export default function Navbar() {
           </NavIconBtn>
 
           {/* Wishlist */}
-          <NavIconBtn title="Wishlist" onClick={() => setWishlistOpen(true)}>
-            <svg width="16" height="16" viewBox="0 0 24 24"
-              fill="none" stroke="#0a0a0a" strokeWidth="1.5">
-              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06
-                -1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78
-                -7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
-            </svg>
-          </NavIconBtn>
+          <div style={{ position: 'relative' }}>
+            <NavIconBtn title="Wishlist" onClick={() => setWishlistOpen(true)}>
+              <svg width="16" height="16" viewBox="0 0 24 24"
+                fill="none" stroke="#0a0a0a" strokeWidth="1.5">
+                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06
+                  -1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78
+                  -7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+              </svg>
+            </NavIconBtn>
+            {wishlist.length > 0 && (
+              <span style={{
+                position: 'absolute', top: '-5px', right: '-5px',
+                width: '16px', height: '16px', borderRadius: '50%',
+                background: '#C9A84C', fontSize: '0.48rem',
+                color: '#0a0a0a', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', fontWeight: '700',
+              }}>{wishlist.length}</span>
+            )}
+          </div>
 
-          {/* Cart */}
-          <NavIconBtn title="Cart" onClick={() => setCartOpen(true)}>
-            <svg width="16" height="16" viewBox="0 0 24 24"
-              fill="none" stroke="#0a0a0a" strokeWidth="1.5">
-              <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293
-                2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100
-                4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-            </svg>
-          </NavIconBtn>
-
-          {/* AUTH SECTION */}
+          
+          {/* AUTH */}
           {user ? (
             <div style={{ position: 'relative' }}>
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  background: '#0a0a0a',
+                  display: 'flex', alignItems: 'center', gap: '0.5rem',
+                  background: '#fafafa',
                   border: 'none',
-                  padding: '0.45rem 1rem 0.45rem 0.45rem',
-                  cursor: 'pointer',
+                  padding: '0.45rem 1rem 0.45rem 0.45rem', cursor: 'pointer',
                 }}>
                 <div style={{
-                  width: '26px',
-                  height: '26px',
-                  borderRadius: '50%',
-                  background: '#C9A84C',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.65rem',
-                  fontWeight: '700',
-                  color: '#0a0a0a',
+                  width: '50px', height: '50px', borderRadius: '50%',
+                  background: '#C9A84C', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1.5rem', fontWeight: '700', color: '#0a0a0a',
                 }}>
                   {user.displayName ? user.displayName[0].toUpperCase() : user.email[0].toUpperCase()}
                 </div>
                 <span style={{
-                  fontSize: '0.6rem',
-                  color: '#fafafa',
-                  letterSpacing: '0.05em',
-                  maxWidth: '80px',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
+                  fontSize: '0.6rem', color: '#fafafa', letterSpacing: '0.05em',
+                  maxWidth: '80px', overflow: 'hidden',
+                  textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 }}>
-                  {user.displayName || user.email.split('@')[0]}
+                  {/*{user.displayName || user.email.split('@')[0]}*/}
                 </span>
-                <svg width="10" height="10" viewBox="0 0 24 24"
+               {/* <svg width="10" height="10" viewBox="0 0 24 24"
                   fill="none" stroke="#fafafa" strokeWidth="2">
                   <path d="M6 9l6 6 6-6"/>
-                </svg>
+                </svg> */}
               </button>
 
-              {/* PROFILE DROPDOWN */}
               {profileOpen && (
                 <div style={{
-                  position: 'absolute',
-                  top: 'calc(100% + 8px)',
-                  right: 0,
-                  background: '#fff',
-                  border: '0.5px solid rgba(0,0,0,0.09)',
-                  minWidth: '180px',
-                  zIndex: 300,
+                  position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                  background: '#fff', border: '0.5px solid rgba(0,0,0,0.09)',
+                  minWidth: '180px', zIndex: 300,
                   boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                 }}>
                   {[
-                    { label: '👤 My Profile', href: '#' },
-                    { label: '📦 My Orders', href: '#' },
-                    { label: '🏪 My Store', href: '#' },
+                    { label: '👤 My Profile', href: '/profile' },
+                    { label: '📦 My Orders', href: '/orders' },
+                    { label: '🏪 My Store', href: '/store' },
                     { label: '💰 My Wallet', href: '#' },
-                    { label: '❤️ Wishlist', href: '#' },
                     { label: '⚙️ Settings', href: '#' },
                   ].map(item => (
                     <a key={item.label} href={item.href} style={{
-                      display: 'block',
-                      padding: '0.75rem 1rem',
-                      fontSize: '0.65rem',
-                      color: '#0a0a0a',
+                      display: 'block', padding: '0.75rem 1rem',
+                      fontSize: '0.65rem', color: '#0a0a0a',
+                      fontWeight: "700",
                       textDecoration: 'none',
                       borderBottom: '0.5px solid rgba(0,0,0,0.06)',
                       letterSpacing: '0.03em',
                     }}>{item.label}</a>
                   ))}
                   <button onClick={logout} style={{
-                    display: 'block',
-                    width: '100%',
-                    padding: '0.75rem 1rem',
-                    fontSize: '0.65rem',
-                    color: '#c0392b',
-                    background: 'none',
-                    border: 'none',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    letterSpacing: '0.03em',
+                    display: 'block', width: '100%',
+                    padding: '0.75rem 1rem', fontSize: '0.65rem',
+                    color: '#c0392b', background: 'none', border: 'none',
+                    textAlign: 'left', cursor: 'pointer', letterSpacing: '0.03em',
                   }}>🚪 Log Out</button>
                 </div>
               )}
@@ -216,29 +194,19 @@ export default function Navbar() {
             <>
               <Link href="/signup" style={{ textDecoration: 'none' }}>
                 <button style={{
-                  background: '#0a0a0a',
-                  color: '#fafafa',
-                  border: 'none',
-                  padding: '0.55rem 1.2rem',
-                  fontFamily: 'Arial, sans-serif',
-                  fontSize: '0.6rem',
-                  fontWeight: '600',
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
+                  background: '#0a0a0a', color: '#fafafa', border: 'none',
+                  padding: '0.55rem 1.2rem', fontFamily: 'Arial, sans-serif',
+                  fontSize: '0.6rem', fontWeight: '600',
+                  letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer',
                 }}>Sign Up</button>
               </Link>
               <Link href="/login" style={{ textDecoration: 'none' }}>
                 <button style={{
-                  background: 'transparent',
-                  color: '#0a0a0a',
+                  background: 'transparent', color: '#0a0a0a',
                   border: '0.5px solid rgba(0,0,0,0.15)',
-                  padding: '0.55rem 1.2rem',
-                  fontFamily: 'Arial, sans-serif',
-                  fontSize: '0.6rem',
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
+                  padding: '0.55rem 1.2rem', fontFamily: 'Arial, sans-serif',
+                  fontSize: '0.6rem', letterSpacing: '0.2em',
+                  textTransform: 'uppercase', cursor: 'pointer',
                 }}>Log In</button>
               </Link>
             </>
@@ -248,62 +216,114 @@ export default function Navbar() {
 
       {/* CART PANEL */}
       {cartOpen && (
-        <div
-          onClick={() => setCartOpen(false)}
-          style={{
-            position: 'fixed', inset: 0,
-            background: 'rgba(0,0,0,0.4)',
-            zIndex: 400,
+        <div onClick={() => setCartOpen(false)} style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(0,0,0,0.4)', zIndex: 400,
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            position: 'absolute', top: 0, right: 0, bottom: 0,
+            width: '380px', background: '#fff',
+            padding: '2rem', overflowY: 'auto',
           }}>
-          <div
-            onClick={e => e.stopPropagation()}
-            style={{
-              position: 'absolute',
-              top: 0, right: 0, bottom: 0,
-              width: '360px',
-              background: '#fff',
-              padding: '2rem',
-              overflowY: 'auto',
-            }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: '400', fontSize: '1.3rem' }}>Your Cart</h2>
+              <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: '400', fontSize: '1.3rem' }}>
+                Cart ({cart.length})
+              </h2>
               <button onClick={() => setCartOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
             </div>
-            <p style={{ fontSize: '0.72rem', color: '#6a6a6a', textAlign: 'center', marginTop: '3rem' }}>
-              Your cart is empty.<br />
-              <a href="/marketplace" style={{ color: '#C9A84C' }}>Browse the marketplace →</a>
-            </p>
+
+            {cart.length === 0 ? (
+              <p style={{ fontSize: '0.72rem', color: '#6a6a6a', textAlign: 'center', marginTop: '3rem' }}>
+                Your cart is empty.<br />
+                <a href="/marketplace" style={{ color: '#C9A84C' }}>Browse the marketplace →</a>
+              </p>
+            ) : (
+              <>
+                {cart.map(item => (
+                  <div key={item.id} style={{
+                    display: 'flex', alignItems: 'center', gap: '1rem',
+                    padding: '1rem 0', borderBottom: '0.5px solid rgba(0,0,0,0.06)',
+                  }}>
+                    <div style={{
+                      width: '50px', height: '50px', background: '#f5f3ee',
+                      display: 'flex', alignItems: 'center',
+                      justifyContent: 'center', fontSize: '1.5rem', flexShrink: 0,
+                    }}>{item.emoji}</div>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: '0.72rem', fontWeight: '600', marginBottom: '0.2rem' }}>{item.name}</p>
+                      <p style={{ fontSize: '0.65rem', color: '#C9A84C' }}>{item.store}</p>
+                      <p style={{ fontSize: '0.8rem', fontFamily: 'Georgia, serif' }}>₦{item.price.toLocaleString()}</p>
+                    </div>
+                    <button onClick={() => removeFromCart(item.id)} style={{
+                      background: 'none', border: 'none',
+                      color: '#c0392b', cursor: 'pointer', fontSize: '0.65rem',
+                    }}>Remove</button>
+                  </div>
+                ))}
+                <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '0.5px solid rgba(0,0,0,0.09)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: '600' }}>Total</span>
+                    <span style={{ fontFamily: 'Georgia, serif', fontSize: '1rem' }}>₦{cartTotal.toLocaleString()}</span>
+                  </div>
+                  <button style={{
+                    width: '100%', background: '#0a0a0a', color: '#fafafa',
+                    border: 'none', padding: '0.85rem',
+                    fontSize: '0.6rem', letterSpacing: '0.2em',
+                    textTransform: 'uppercase', fontWeight: '700', cursor: 'pointer',
+                  }}>Proceed to Checkout</button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
 
       {/* WISHLIST PANEL */}
       {wishlistOpen && (
-        <div
-          onClick={() => setWishlistOpen(false)}
-          style={{
-            position: 'fixed', inset: 0,
-            background: 'rgba(0,0,0,0.4)',
-            zIndex: 400,
+        <div onClick={() => setWishlistOpen(false)} style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(0,0,0,0.4)', zIndex: 400,
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            position: 'absolute', top: 0, right: 0, bottom: 0,
+            width: '380px', background: '#fff',
+            padding: '2rem', overflowY: 'auto',
           }}>
-          <div
-            onClick={e => e.stopPropagation()}
-            style={{
-              position: 'absolute',
-              top: 0, right: 0, bottom: 0,
-              width: '360px',
-              background: '#fff',
-              padding: '2rem',
-              overflowY: 'auto',
-            }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: '400', fontSize: '1.3rem' }}>Wishlist</h2>
+              <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: '400', fontSize: '1.3rem' }}>
+                Wishlist ({wishlist.length})
+              </h2>
               <button onClick={() => setWishlistOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
             </div>
-            <p style={{ fontSize: '0.72rem', color: '#6a6a6a', textAlign: 'center', marginTop: '3rem' }}>
-              Nothing saved yet.<br />
-              <a href="/marketplace" style={{ color: '#C9A84C' }}>Explore items →</a>
-            </p>
+
+            {wishlist.length === 0 ? (
+              <p style={{ fontSize: '0.72rem', color: '#6a6a6a', textAlign: 'center', marginTop: '3rem' }}>
+                Nothing saved yet.<br />
+                <a href="/marketplace" style={{ color: '#C9A84C' }}>Explore items →</a>
+              </p>
+            ) : (
+              wishlist.map(item => (
+                <div key={item.id} style={{
+                  display: 'flex', alignItems: 'center', gap: '1rem',
+                  padding: '1rem 0', borderBottom: '0.5px solid rgba(0,0,0,0.06)',
+                }}>
+                  <div style={{
+                    width: '50px', height: '50px', background: '#f5f3ee',
+                    display: 'flex', alignItems: 'center',
+                    justifyContent: 'center', fontSize: '1.5rem', flexShrink: 0,
+                  }}>{item.emoji}</div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: '0.72rem', fontWeight: '600', marginBottom: '0.2rem' }}>{item.name}</p>
+                    <p style={{ fontSize: '0.65rem', color: '#C9A84C' }}>{item.store}</p>
+                    <p style={{ fontSize: '0.8rem', fontFamily: 'Georgia, serif' }}>₦{item.price.toLocaleString()}</p>
+                  </div>
+                  <button onClick={() => toggleWishlist(item)} style={{
+                    background: 'none', border: 'none',
+                    color: '#c0392b', cursor: 'pointer', fontSize: '0.65rem',
+                  }}>Remove</button>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}
@@ -314,14 +334,10 @@ export default function Navbar() {
 function NavIconBtn({ children, title, onClick }) {
   return (
     <button title={title} onClick={onClick} style={{
-      width: '36px',
-      height: '36px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      width: '36px', height: '36px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
       border: '0.5px solid rgba(0,0,0,0.09)',
-      background: 'transparent',
-      cursor: 'pointer',
+      background: 'transparent', cursor: 'pointer',
     }}>
       {children}
     </button>
