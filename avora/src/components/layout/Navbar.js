@@ -9,6 +9,7 @@ export default function Navbar() {
   const [cartOpen, setCartOpen] = useState(false)
   const [wishlistOpen, setWishlistOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
+  const [hoveredId, setHoveredId] = useState(null)
   const { user, logout } = useAuth()
   const { cart, wishlist, removeFromCart, toggleWishlist, cartTotal } = useCart()
 
@@ -102,9 +103,7 @@ export default function Navbar() {
                 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512
                 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
             </svg>
-          </NavIconBtn>
-
-        
+          </NavIconBtn>        
           
           {/* AUTH */}
           {user ? (
@@ -193,120 +192,6 @@ export default function Navbar() {
           )}
         </div>
       </nav>
-
-      {/* CART PANEL */}
-      {cartOpen && (
-        <div onClick={() => setCartOpen(false)} style={{
-          position: 'fixed', inset: 0,
-          background: 'rgba(0,0,0,0.4)', zIndex: 400,
-        }}>
-          <div onClick={e => e.stopPropagation()} style={{
-            position: 'absolute', top: 0, right: 0, bottom: 0,
-            width: '380px', background: '#fff',
-            padding: '2rem', overflowY: 'auto',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: '400', fontSize: '1.3rem' }}>
-                Cart ({cart.length})
-              </h2>
-              <button onClick={() => setCartOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
-            </div>
-
-            {cart.length === 0 ? (
-              <p style={{ fontSize: '0.72rem', color: '#6a6a6a', textAlign: 'center', marginTop: '3rem' }}>
-                Your cart is empty.<br />
-                <a href="/marketplace" style={{ color: '#C9A84C' }}>Browse the marketplace →</a>
-              </p>
-            ) : (
-              <>
-                {cart.map(item => (
-                  <div key={item.id} style={{
-                    display: 'flex', alignItems: 'center', gap: '1rem',
-                    padding: '1rem 0', borderBottom: '0.5px solid rgba(0,0,0,0.06)',
-                  }}>
-                    <div style={{
-                      width: '50px', height: '50px', background: '#f5f3ee',
-                      display: 'flex', alignItems: 'center',
-                      justifyContent: 'center', fontSize: '1.5rem', flexShrink: 0,
-                    }}>{item.emoji}</div>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ fontSize: '0.72rem', fontWeight: '600', marginBottom: '0.2rem' }}>{item.name}</p>
-                      <p style={{ fontSize: '0.65rem', color: '#C9A84C' }}>{item.store}</p>
-                      <p style={{ fontSize: '0.8rem', fontFamily: 'Georgia, serif' }}>₦{item.price.toLocaleString()}</p>
-                    </div>
-                    <button onClick={() => removeFromCart(item.id)} style={{
-                      background: 'none', border: 'none',
-                      color: '#c0392b', cursor: 'pointer', fontSize: '0.65rem',
-                    }}>Remove</button>
-                  </div>
-                ))}
-                <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '0.5px solid rgba(0,0,0,0.09)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '600' }}>Total</span>
-                    <span style={{ fontFamily: 'Georgia, serif', fontSize: '1rem' }}>₦{cartTotal.toLocaleString()}</span>
-                  </div>
-                  <button style={{
-                    width: '100%', background: '#0a0a0a', color: '#fafafa',
-                    border: 'none', padding: '0.85rem',
-                    fontSize: '0.6rem', letterSpacing: '0.2em',
-                    textTransform: 'uppercase', fontWeight: '700', cursor: 'pointer',
-                  }}>Proceed to Checkout</button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* WISHLIST PANEL */}
-      {wishlistOpen && (
-        <div onClick={() => setWishlistOpen(false)} style={{
-          position: 'fixed', inset: 0,
-          background: 'rgba(0,0,0,0.4)', zIndex: 400,
-        }}>
-          <div onClick={e => e.stopPropagation()} style={{
-            position: 'absolute', top: 0, right: 0, bottom: 0,
-            width: '380px', background: '#fff',
-            padding: '2rem', overflowY: 'auto',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: '400', fontSize: '1.3rem' }}>
-                Wishlist ({wishlist.length})
-              </h2>
-              <button onClick={() => setWishlistOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
-            </div>
-
-            {wishlist.length === 0 ? (
-              <p style={{ fontSize: '0.72rem', color: '#6a6a6a', textAlign: 'center', marginTop: '3rem' }}>
-                Nothing saved yet.<br />
-                <a href="/marketplace" style={{ color: '#C9A84C' }}>Explore items →</a>
-              </p>
-            ) : (
-              wishlist.map(item => (
-                <div key={item.id} style={{
-                  display: 'flex', alignItems: 'center', gap: '1rem',
-                  padding: '1rem 0', borderBottom: '0.5px solid rgba(0,0,0,0.06)',
-                }}>
-                  <div style={{
-                    width: '50px', height: '50px', background: '#f5f3ee',
-                    display: 'flex', alignItems: 'center',
-                    justifyContent: 'center', fontSize: '1.5rem', flexShrink: 0,
-                  }}>{item.emoji}</div>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: '0.72rem', fontWeight: '600', marginBottom: '0.2rem' }}>{item.name}</p>
-                    <p style={{ fontSize: '0.65rem', color: '#C9A84C' }}>{item.store}</p>
-                    <p style={{ fontSize: '0.8rem', fontFamily: 'Georgia, serif' }}>₦{item.price.toLocaleString()}</p>
-                  </div>
-                  <button onClick={() => toggleWishlist(item)} style={{
-                    background: 'none', border: 'none',
-                    color: '#c0392b', cursor: 'pointer', fontSize: '0.65rem',
-                  }}>Remove</button>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
     </>
   )
 }

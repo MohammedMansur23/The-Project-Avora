@@ -1,44 +1,35 @@
 'use client'
 import { createContext, useContext, useEffect, useState } from 'react'
-import { useAuth } from './AuthContext'
 
 const CartContext = createContext({})
 
 export function CartProvider({ children }) {
-  const { user } = useAuth()
   const [cart, setCart] = useState([])
   const [wishlist, setWishlist] = useState([])
 
-  const cartKey = user ? `avora_cart_${user.uid}` : null
-  const wishlistKey = user ? `avora_wishlist_${user.uid}` : null
-
-  // Load from localStorage when user logs in
+  // Load once on mount
   useEffect(() => {
-    if (user) {
-      const savedCart = localStorage.getItem(`avora_cart_${user.uid}`)
-      const savedWishlist = localStorage.getItem(`avora_wishlist_${user.uid}`)
-      setCart(savedCart ? JSON.parse(savedCart) : [])
-      setWishlist(savedWishlist ? JSON.parse(savedWishlist) : [])
-    } else {
-      setCart([])
-      setWishlist([])
-    }
-  }, [user])
+    try {
+      const savedCart = localStorage.getItem('avora_cart')
+      const savedWishlist = localStorage.getItem('avora_wishlist')
+      if (savedCart) setCart(JSON.parse(savedCart))
+      if (savedWishlist) setWishlist(JSON.parse(savedWishlist))
+    } catch (e) {}
+  }, [])
 
-  // Save to localStorage whenever cart changes
+  // Save whenever cart changes
   useEffect(() => {
-    if (cartKey) localStorage.setItem(cartKey, JSON.stringify(cart))
-  }, [cart, cartKey])
+    localStorage.setItem('avora_cart', JSON.stringify(cart))
+  }, [cart])
 
-  // Save to localStorage whenever wishlist changes
+  // Save whenever wishlist changes
   useEffect(() => {
-    if (wishlistKey) localStorage.setItem(wishlistKey, JSON.stringify(wishlist))
-  }, [wishlist, wishlistKey])
+    localStorage.setItem('avora_wishlist', JSON.stringify(wishlist))
+  }, [wishlist])
 
   const addToCart = (product) => {
     setCart(prev => {
-      const exists = prev.find(p => p.id === product.id)
-      if (exists) return prev
+      if (prev.find(p => p.id === product.id)) return prev
       return [...prev, { ...product, quantity: 1 }]
     })
   }
