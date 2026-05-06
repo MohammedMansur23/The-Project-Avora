@@ -104,27 +104,7 @@ export default function Navbar() {
             </svg>
           </NavIconBtn>
 
-          {/* Wishlist */}
-          <div style={{ position: 'relative' }}>
-            <NavIconBtn title="Wishlist" onClick={() => setWishlistOpen(true)}>
-              <svg width="16" height="16" viewBox="0 0 24 24"
-                fill="none" stroke="#0a0a0a" strokeWidth="1.5">
-                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06
-                  -1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78
-                  -7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
-              </svg>
-            </NavIconBtn>
-            {wishlist.length > 0 && (
-              <span style={{
-                position: 'absolute', top: '-5px', right: '-5px',
-                width: '16px', height: '16px', borderRadius: '50%',
-                background: '#C9A84C', fontSize: '0.48rem',
-                color: '#0a0a0a', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontWeight: '700',
-              }}>{wishlist.length}</span>
-            )}
-          </div>
-
+        
           
           {/* AUTH */}
           {user ? (

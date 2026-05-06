@@ -1,28 +1,39 @@
 'use client'
 import { createContext, useContext, useEffect, useState } from 'react'
+import { useAuth } from './AuthContext'
 
 const CartContext = createContext({})
 
 export function CartProvider({ children }) {
+  const { user } = useAuth()
   const [cart, setCart] = useState([])
   const [wishlist, setWishlist] = useState([])
 
-  // Load from localStorage on first load
-  useEffect(() => {
-    const savedCart = localStorage.getItem('avora_cart')
-    const savedWishlist = localStorage.getItem('avora_wishlist')
-    if (savedCart) setCart(JSON.parse(savedCart))
-    if (savedWishlist) setWishlist(JSON.parse(savedWishlist))
-  }, [])
+  const cartKey = user ? `avora_cart_${user.uid}` : null
+  const wishlistKey = user ? `avora_wishlist_${user.uid}` : null
 
-  // Save to localStorage whenever cart or wishlist changes
+  // Load from localStorage when user logs in
   useEffect(() => {
-    localStorage.setItem('avora_cart', JSON.stringify(cart))
-  }, [cart])
+    if (user) {
+      const savedCart = localStorage.getItem(`avora_cart_${user.uid}`)
+      const savedWishlist = localStorage.getItem(`avora_wishlist_${user.uid}`)
+      setCart(savedCart ? JSON.parse(savedCart) : [])
+      setWishlist(savedWishlist ? JSON.parse(savedWishlist) : [])
+    } else {
+      setCart([])
+      setWishlist([])
+    }
+  }, [user])
 
+  // Save to localStorage whenever cart changes
   useEffect(() => {
-    localStorage.setItem('avora_wishlist', JSON.stringify(wishlist))
-  }, [wishlist])
+    if (cartKey) localStorage.setItem(cartKey, JSON.stringify(cart))
+  }, [cart, cartKey])
+
+  // Save to localStorage whenever wishlist changes
+  useEffect(() => {
+    if (wishlistKey) localStorage.setItem(wishlistKey, JSON.stringify(wishlist))
+  }, [wishlist, wishlistKey])
 
   const addToCart = (product) => {
     setCart(prev => {
@@ -63,4 +74,3 @@ export function CartProvider({ children }) {
 }
 
 export const useCart = () => useContext(CartContext)
-
