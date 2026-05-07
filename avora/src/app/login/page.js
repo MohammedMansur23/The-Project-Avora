@@ -42,9 +42,15 @@ export default function Login() {
       } else if (err.code === 'auth/wrong-password') {
         setError('Incorrect password. Please try again.')
       } else if (err.code === 'auth/invalid-credential') {
-        setError('Invalid email or password.')
+        setError('Incorrect email or password. Please try again.')
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Please enter a valid email address.')
+      } else if (err.code === 'auth/too-many-requests') {
+        setError('Too many failed attempts. Please wait a few minutes and try again.')
+      } else if (err.code === 'auth/user-disabled') {
+        setError('This account has been disabled.')
       } else {
-        setError('Login failed. Please try again.')
+        setError(`Login failed: ${err.message}`)
       }
     }
     setLoading(false)
@@ -122,7 +128,7 @@ export default function Login() {
             fontSize: '0.6rem',
             color: 'rgba(255,255,255,0.25)',
             letterSpacing: '0.1em',
-          }}>© 2025 Avora</p>
+          }}>© 2026 Avora</p>
         </div>
 
         {/* RIGHT PANEL */}
@@ -192,7 +198,7 @@ export default function Login() {
             style={{ ...inputStyle, width: '100%', marginBottom: '0.5rem', boxSizing: 'border-box' }} />
 
           <div style={{ textAlign: 'right', marginBottom: '1.25rem' }}>
-            <a href="#" style={{
+            <a href="/forgot-password" style={{
               fontSize: '0.62rem',
               color: '#C9A84C',
               textDecoration: 'none',

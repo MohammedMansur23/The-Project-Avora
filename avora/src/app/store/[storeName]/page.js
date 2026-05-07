@@ -39,6 +39,23 @@ const STORE_INFO = {
   'Glam by Zara': { emoji: '💄', category: 'Beauty & Hair', location: 'Female Hostel B', rating: 4.8, reviews: 112, description: 'Full face makeup, gele tying, and nail art. Available for events and everyday glam.', shield: 93, hours: '8am - 4pm daily' },
 }
 
+function StarRating({ rating, max = 5 }) {
+  return (
+    <div style={{ display: 'flex', gap: '1px' }}>
+      {Array.from({ length: max }).map((_, i) => (
+        <svg key={i} width="12" height="12" viewBox="0 0 24 24">
+          <polygon
+            points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+            fill={i < Math.round(rating) ? '#C9A84C' : 'none'}
+            stroke="#C9A84C"
+            strokeWidth="2"
+          />
+        </svg>
+      ))}
+    </div>
+  )
+}
+
 export default function StorePage({ params }) {
   const { storeName: rawStoreName } = use(params)
   const storeName = decodeURIComponent(rawStoreName)
@@ -152,7 +169,7 @@ export default function StorePage({ params }) {
               </div>
 
               <p style={{ fontSize: '0.6rem', color: '#C9A84C', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-                {info.category} · 📍 {info.location}
+                {info.category} · 📍 {info.location} ·  {info.hours}
               </p>
 
               <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, maxWidth: '500px', marginBottom: '1rem' }}>
@@ -161,7 +178,7 @@ export default function StorePage({ params }) {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <span style={{ color: '#C9A84C', fontSize: '0.9rem' }}>{'★'.repeat(Math.round(info.rating))}</span>
+                  <StarRating rating={info.rating} />
                   <span style={{ fontSize: '0.65rem', color: '#fafafa', fontWeight: '600' }}>{info.rating}</span>
                   <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)' }}>({info.reviews} reviews)</span>
                 </div>
@@ -390,7 +407,7 @@ export default function StorePage({ params }) {
               background: '#f5f3ee', padding: '1.5rem', textAlign: 'center', marginBottom: '1.5rem',
             }}>
               <div style={{ fontFamily: 'Georgia, serif', fontSize: '3rem', color: '#0a0a0a' }}>{info.rating}</div>
-              <div style={{ color: '#C9A84C', fontSize: '1.2rem', marginBottom: '0.25rem' }}>{'★'.repeat(Math.round(info.rating))}</div>
+              <div style={{alignItems: 'center', display: 'flex', justifyContent: 'center' }}>< StarRating rating={info.rating} /></div>
               <div style={{ fontSize: '0.65rem', color: '#6a6a6a' }}>{info.reviews} reviews</div>
             </div>
 
@@ -405,7 +422,7 @@ export default function StorePage({ params }) {
                   <span style={{ fontSize: '0.72rem', fontWeight: '600' }}>{review.name}</span>
                   <span style={{ fontSize: '0.6rem', color: '#6a6a6a' }}>{review.date}</span>
                 </div>
-                <div style={{ color: '#C9A84C', fontSize: '0.8rem', marginBottom: '0.25rem' }}>{'★'.repeat(review.rating)}</div>
+                <StarRating rating={review.rating} />
                 <p style={{ fontSize: '0.72rem', color: '#0a0a0a', lineHeight: 1.6 }}>{review.comment}</p>
               </div>
             ))}

@@ -35,6 +35,23 @@ const SORT_OPTIONS = [
   { label: 'Featured First', value: 'featured' },
 ]
 
+function StarRating({ rating, max = 5 }) {
+  return (
+    <div style={{ display: 'flex', gap: '1px' }}>
+      {Array.from({ length: max }).map((_, i) => (
+        <svg key={i} width="12" height="12" viewBox="0 0 24 24">
+          <polygon
+            points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+            fill={i < Math.round(rating) ? '#C9A84C' : 'none'}
+            stroke="#C9A84C"
+            strokeWidth="2"
+          />
+        </svg>
+      ))}
+    </div>
+  )
+}
+
 export default function Marketplace() {
   const { addToCart, removeFromCart, isInCart, toggleWishlist, isInWishlist } = useCart()
   const { requireAuth } = useRequireAuth()
@@ -257,7 +274,9 @@ export default function Marketplace() {
                   <a href={`/store/${encodeURIComponent(product.store)}`} style={{
                   display: 'block', fontSize: '0.55rem', color: '#C9A84C',
                   letterSpacing: '0.1em', textTransform: 'uppercase',
-                  marginBottom: '0.25rem', textDecoration: 'none',
+                  marginBottom: '0.25rem', textDecoration: 'none',     
+                  transition: 'font-size 0.2s ease',
+                  fontSize: hoveredId === product.id ? '0.7rem' : '0.55rem',            
                   }}>{product.store}
                 </a>
                   <h3 style={{

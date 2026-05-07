@@ -147,7 +147,7 @@ export default function Navbar() {
                   {[
                     { label: '👤 My Profile', href: '/profile' },
                     { label: '📦 My Orders', href: '/orders' },
-                    { label: '🏪 My Store', href: '/store' },
+                    { label: '🏪 My Store', href: typeof window !== 'undefined' && localStorage.getItem('avora_is_seller') === 'true' ? '/seller_dashboard' : '/open-a-store' },
                     { label: '💰 My Wallet', href: '#' },
                     { label: '⚙️ Settings', href: '#' },
                   ].map(item => (
