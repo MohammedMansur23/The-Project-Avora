@@ -182,11 +182,17 @@ export default function SearchPage() {
                 overflow: 'hidden',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <div style={{
-                  fontSize: '3.5rem',
-                  transform: hoveredId === product.id ? 'scale(1.25)' : 'scale(1)',
-                  transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
-                }}>{product.emoji}</div>
+                <div style={{ background: '#f5f3ee', height: '160px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {product.image ? (
+                    <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{
+                      fontSize: '3.5rem',
+                      transform: hoveredId === product.id ? 'scale(1.25)' : 'scale(1)',
+                      transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}>{product.emoji}</div>
+                  )}
+                </div>
               </div>
 
               <div style={{ padding: '1rem' }}>

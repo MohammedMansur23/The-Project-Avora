@@ -1,10 +1,10 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { useCart } from '../lib/CartContext'
 import { useRequireAuth } from '../lib/useRequireAuth'
 
-const PRODUCTS = [
+const HARDCODED_PRODUCTS = [
   { id: 1, name: 'Jollof Rice & Chicken', store: "Mama Tee's Kitchen", price: 1500, category: 'Food & Drinks', emoji: '🍲', sponsored: true, type: 'product' },
   { id: 2, name: 'Ankara Crop Top', store: 'Campus Threads', price: 4500, category: 'Fashion', emoji: '👗', sponsored: true, type: 'product' },
   { id: 3, name: 'iPhone Charger (Fast)', store: 'TechZone Unilorin', price: 2800, category: 'Electronics', emoji: '📱', sponsored: true, type: 'product' },
@@ -49,6 +49,18 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState('All')
   const [hoveredId, setHoveredId] = useState(null)
   const [toast, setToast] = useState(null)
+  const [allProducts, setAllProducts] = useState(HARDCODED_PRODUCTS)
+
+  useEffect(() => {
+    const localProducts = JSON.parse(localStorage.getItem('avora_all_products') || '[]')
+    if (localProducts.length > 0) {
+      const merged = [
+        ...HARDCODED_PRODUCTS,
+        ...localProducts.filter(lp => !HARDCODED_PRODUCTS.find(p => p.id === lp.id)),
+      ]
+      setAllProducts(merged)
+    }
+  }, [])
 
   const showToast = (msg) => {
     setToast(msg)
@@ -75,8 +87,8 @@ export default function Home() {
   }
 
   const filtered = activeCategory === 'All'
-    ? PRODUCTS
-    : PRODUCTS.filter(p => p.category === activeCategory)
+    ? allProducts
+    : allProducts.filter(p => p.category === activeCategory)
 
   return (
     <main>
@@ -123,13 +135,13 @@ export default function Home() {
 
         {!user ? (
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="/marketplace" style={{
+            <a href="/signup" style={{
               background: '#C9A84C', color: '#0a0a0a',
               padding: '0.85rem 2.5rem', fontSize: '0.65rem',
               letterSpacing: '0.2em', textTransform: 'uppercase',
               fontWeight: '700', textDecoration: 'none',
             }}>Shop Now</a>
-            <a href="/signup" style={{
+            <a href="/setup-store" style={{
               background: 'transparent', color: '#fafafa',
               border: '0.5px solid rgba(255,255,255,0.3)',
               padding: '0.85rem 2.5rem', fontSize: '0.65rem',
@@ -245,28 +257,33 @@ export default function Home() {
                 }}>Service</div>
               )}
 
-              {/* IMAGE — zooms inside fixed container on hover */}
               <div style={{
                 background: '#f5f3ee', height: '160px',
                 overflow: 'hidden',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <div style={{
-                  fontSize: '3.5rem',
-                  transform: hoveredId === product.id ? 'scale(1.25)' : 'scale(1)',
-                  transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
-                }}>{product.emoji}</div>
+                <div style={{ background: '#f5f3ee', height: '160px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {product.image ? (
+                    <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{
+                      fontSize: '3.5rem',
+                      transform: hoveredId === product.id ? 'scale(1.25)' : 'scale(1)',
+                      transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}>{product.emoji}</div>
+                  )}
+                </div>
               </div>
 
               <div style={{ padding: '1rem' }}>
                 <a href={`/store/${encodeURIComponent(product.store)}`} style={{
-                  display: 'block', fontSize: '0.55rem', color: '#C9A84C',
+                  display: 'block',
                   letterSpacing: '0.1em', textTransform: 'uppercase',
                   marginBottom: '0.25rem', textDecoration: 'none',
+                  color: '#C9A84C',
+                  fontSize: hoveredId === product.id ? '0.7rem' : '0.55rem',
                   transition: 'font-size 0.2s ease',
-                  fontSize: hoveredId === product.id ? '0.7rem' : '0.55rem',            
-                  }}>{product.store}
-                </a>
+                }}>{product.store}</a>
                 <h3 style={{
                   fontSize: '0.85rem', fontWeight: '600',
                   color: '#0a0a0a', marginBottom: '0.5rem', lineHeight: 1.4,
@@ -279,7 +296,6 @@ export default function Home() {
                   ₦{product.price.toLocaleString()}
                 </p>
 
-                {/* BUTTONS */}
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button
                     title="Message Seller"
@@ -288,22 +304,20 @@ export default function Home() {
                       fontSize: '0.55rem', letterSpacing: '0.15em',
                       textTransform: 'uppercase', fontWeight: '600',
                       cursor: 'pointer', background: '#0a0a0a', color: '#fafafa',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem',
                     }}>
-                    <svg width="16" height="10" viewBox="0 0 24 20"
-                      fill="#ffffff" stroke="#ffffff" strokeWidth="1.5">
-                      <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03
-                        8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512
-                        15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                    </svg> Message
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="1.5">
+                      <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    Message
                   </button>
                   <button
                     onClick={() => handleCart(product)}
                     title={isInCart(product.id) ? 'Remove from Cart' : 'Add to Cart'}
                     style={{
-                      width: '36px', border: 'none', cursor: 'pointer', fontSize: '1rem',
+                      width: '36px', cursor: 'pointer', fontSize: '1rem',
                       background: isInCart(product.id) ? '#fff0f0' : 'transparent',
                       border: '0.5px solid rgba(0,0,0,0.09)',
-                      color: isInCart(product.id) ? '#fafafa' : '#0a0a0a',
                     }}>🛒</button>
                   <button
                     onClick={() => handleWishlist(product)}
@@ -312,21 +326,17 @@ export default function Home() {
                       width: '36px', cursor: 'pointer', fontSize: '1rem',
                       background: isInWishlist(product.id) ? '#fff0f0' : 'transparent',
                       border: '0.5px solid rgba(0,0,0,0.09)',
-                    }}>{isInWishlist(product.id) ? (
-                      <svg width="16" height="16" viewBox="0 0 24 19"
-                        fill="#ff0000" stroke="#ff0000" strokeWidth="1.5">
-                        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06
-                          -1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78
-                          -7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                    }}>
+                    {isInWishlist(product.id) ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#ff0000" stroke="#ff0000" strokeWidth="1.5">
+                        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
                       </svg>
                     ) : (
-                      <svg width="16" height="16" viewBox="0 0 24 24"
-                        fill="none" stroke="#968282" strokeWidth="1.5">
-                        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06
-                          -1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78
-                          -7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#968282" strokeWidth="1.5">
+                        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
                       </svg>
-                    )}</button>
+                    )}
+                  </button>
                 </div>
               </div>
             </div>

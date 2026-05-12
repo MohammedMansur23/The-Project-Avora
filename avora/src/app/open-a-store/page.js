@@ -42,7 +42,7 @@ export default function OpenAStore() {
           <button
             onClick={() => {
               localStorage.setItem('avora_is_seller', 'true')
-              window.location.href = '/seller_dashboard'
+              window.location.href = '/setup-store'
             }}
             style={{
               background: '#C9A84C', color: '#0a0a0a',
@@ -52,19 +52,19 @@ export default function OpenAStore() {
             }}>Open My Store — It's Free</button>
         ) : (
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="/signup" style={{
+            <a href="/setup-store" style={{
               background: '#C9A84C', color: '#0a0a0a',
               padding: '1rem 2.5rem', fontSize: '0.65rem',
               letterSpacing: '0.2em', textTransform: 'uppercase',
               fontWeight: '700', textDecoration: 'none',
             }}>Sign Up & Open Store</a>
-            <a href="/login" style={{
+            {/*<a href="/login" style={{
               background: 'transparent', color: '#0a0a0a',
               border: '0.5px solid rgba(0,0,0,0.15)',
               padding: '1rem 2.5rem', fontSize: '0.65rem',
               letterSpacing: '0.2em', textTransform: 'uppercase',
               textDecoration: 'none',
-            }}>Already have an account?</a>
+            }}>Already have an account?</a>*/}
           </div>
         )}
       </div>

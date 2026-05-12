@@ -431,13 +431,14 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <a href="/seller_dashboard" style={{
-              display: 'inline-block',
-              background: '#C9A84C', color: '#0a0a0a',
-              padding: '0.85rem 2.5rem', fontSize: '0.65rem',
-              letterSpacing: '0.2em', textTransform: 'uppercase',
-              fontWeight: '700', textDecoration: 'none',
-            }}>Open My Store Dashboard →</a>
+            <a href={typeof window !== 'undefined' && localStorage.getItem('avora_is_seller') === 'true' ? '/seller_dashboard' : '/open-a-store'} style={{
+                display: 'inline-block',
+                background: '#C9A84C', color: '#0a0a0a',
+                padding: '0.85rem 2.5rem', fontSize: '0.65rem',
+                letterSpacing: '0.2em', textTransform: 'uppercase',
+                fontWeight: '700', textDecoration: 'none',
+              }}>Open My Store Dashboard
+            </a>
           </div>
         )}
       </div>

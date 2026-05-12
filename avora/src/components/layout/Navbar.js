@@ -6,12 +6,11 @@ import { useCart } from '../../lib/CartContext'
 
 export default function Navbar() {
   const [query, setQuery] = useState('')
-  const [cartOpen, setCartOpen] = useState(false)
-  const [wishlistOpen, setWishlistOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
-  const [hoveredId, setHoveredId] = useState(null)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  
   const { user, logout } = useAuth()
-  const { cart, wishlist, removeFromCart, toggleWishlist, cartTotal } = useCart()
+  const { cartTotal } = useCart()
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -25,25 +24,79 @@ export default function Navbar() {
 
   return (
     <>
-      <nav style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '1rem 2rem',
-        background: '#fafafa',
-        borderBottom: '0.5px solid rgba(0,0,0,0.09)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 200,
-        gap: '1rem',
-        flexWrap: 'wrap',
-      }}>
+      <style>{`
+        .nav-container {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.8rem 1rem;
+          background: #fafafa;
+          border-bottom: 0.5px solid rgba(0,0,0,0.09);
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+          gap: 1rem;
+        }
 
+        .search-wrapper {
+          display: none; /* Hidden on mobile by default, shown in separate bar */
+          flex: 1;
+          max-width: 480px;
+          position: relative;
+        }
+
+        .desktop-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .mobile-search-bar {
+          display: block;
+          padding: 0.5rem 1rem;
+          background: #fafafa;
+          border-bottom: 0.5px solid rgba(0,0,0,0.05);
+        }
+
+        @media (min-width: 768px) {
+          .nav-container { padding: 1rem 2rem; }
+          .search-wrapper { display: block; }
+          .mobile-search-bar { display: none; }
+        }
+
+        .profile-dropdown {
+          position: absolute;
+          top: calc(100% + 8px);
+          right: 0;
+          background: #fff;
+          border: 0.5px solid rgba(0,0,0,0.09);
+          min-width: 200px;
+          z-index: 1100;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .dropdown-link {
+          display: block;
+          padding: 0.8rem 1.2rem;
+          font-size: 0.7rem;
+          font-weight: 600;
+          color: #0a0a0a;
+          text-decoration: none;
+          border-bottom: 0.5px solid rgba(0,0,0,0.05);
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          transition: background 0.2s;
+        }
+
+        .dropdown-link:hover { background: #f9f9f9; }
+      `}</style>
+
+      <nav className="nav-container">
         {/* LOGO */}
         <Link href="/" style={{ textDecoration: 'none' }}>
           <span style={{
             fontFamily: 'Georgia, serif',
-            fontSize: '1.8rem',
+            fontSize: '1.5rem',
             fontWeight: '500',
             letterSpacing: '0.15em',
             color: '#0a0a0a',
@@ -52,159 +105,142 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* SEARCH BAR */}
-        <div style={{ flex: 1, maxWidth: '480px', position: 'relative' }}>
-          <input
-            type="text"
-            placeholder="Search items, services, stores..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            style={{
-              width: '100%',
-              padding: '0.65rem 3rem 0.65rem 1.1rem',
-              border: '0.5px solid rgba(0,0,0,0.09)',
-              background: '#f5f3ee',
-              fontFamily: 'Arial, sans-serif',
-              fontSize: '0.72rem',
-              color: '#0a0a0a',
-              outline: 'none',
-              borderRadius: '0',
-              boxSizing: 'border-box',
-            }}
+        {/* SEARCH BAR (Desktop Only) */}
+        <div className="search-wrapper">
+          <SearchInput 
+            query={query} 
+            setQuery={setQuery} 
+            onSearch={handleSearch} 
+            onKeyDown={handleKeyDown} 
           />
-          <button onClick={handleSearch} style={{
-            position: 'absolute',
-            right: 0, top: 0, bottom: 0,
-            width: '42px',
-            background: '#0a0a0a',
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <svg width="15" height="15" viewBox="0 0 24 24"
-              fill="none" stroke="#fafafa" strokeWidth="2">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="M21 21l-4.35-4.35"/>
-            </svg>
-          </button>
         </div>
 
         {/* NAV ACTIONS */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-
-          {/* Messages */}
-          <NavIconBtn title="Messages">
-            <svg width="16" height="16" viewBox="0 0 24 24"
-              fill="none" stroke="#0a0a0a" strokeWidth="1.5">
-              <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03
-                8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512
-                15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+        <div className="desktop-actions">
+          {/* Inbox Icon */}
+          <NavIconBtn title="Inbox" href="/inbox">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="1.5">
+              <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
             </svg>
-          </NavIconBtn>        
-          
-          {/* AUTH */}
+          </NavIconBtn>
+
           {user ? (
             <div style={{ position: 'relative' }}>
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '0.5rem',
-                  background: '#fafafa',
-                  border: 'none',
-                  padding: '0.45rem 1rem 0.45rem 0.45rem', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center',
+                  background: 'none', border: 'none', cursor: 'pointer', padding: 0
                 }}>
                 <div style={{
-                  width: '50px', height: '50px', borderRadius: '50%',
+                  width: '36px', height: '36px', borderRadius: '50%',
                   background: '#C9A84C', display: 'flex',
                   alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1.5rem', fontWeight: '700', color: '#0a0a0a',
+                  fontSize: '0.9rem', fontWeight: '700', color: '#0a0a0a',
                 }}>
                   {user.displayName ? user.displayName[0].toUpperCase() : user.email[0].toUpperCase()}
                 </div>
-                <span style={{
-                  fontSize: '0.6rem', color: '#fafafa', letterSpacing: '0.05em',
-                  maxWidth: '80px', overflow: 'hidden',
-                  textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                }}>
-                  {/*{user.displayName || user.email.split('@')[0]}*/}
-                </span>
-               {/* <svg width="10" height="10" viewBox="0 0 24 24"
-                  fill="none" stroke="#fafafa" strokeWidth="2">
-                  <path d="M6 9l6 6 6-6"/>
-                </svg> */}
               </button>
 
               {profileOpen && (
-                <div style={{
-                  position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                  background: '#fff', border: '0.5px solid rgba(0,0,0,0.09)',
-                  minWidth: '180px', zIndex: 300,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                }}>
-                  {[
-                    { label: '👤 My Profile', href: '/profile' },
-                    { label: '📦 My Orders', href: '/orders' },
-                    { label: '🏪 My Store', href: typeof window !== 'undefined' && localStorage.getItem('avora_is_seller') === 'true' ? '/seller_dashboard' : '/open-a-store' },
-                    { label: '💰 My Wallet', href: '#' },
-                    { label: '⚙️ Settings', href: '#' },
-                  ].map(item => (
-                    <a key={item.label} href={item.href} style={{
-                      display: 'block', padding: '0.75rem 1rem',
-                      fontSize: '0.65rem', color: '#0a0a0a',
-                      fontWeight: "700",
-                      textDecoration: 'none',
-                      borderBottom: '0.5px solid rgba(0,0,0,0.06)',
-                      letterSpacing: '0.03em',
-                    }}>{item.label}</a>
-                  ))}
+                <div className="profile-dropdown">
+                  <Link href="/profile" className="dropdown-link" onClick={() => setProfileOpen(false)}>👤 My Profile</Link>
+                  {typeof window !== 'undefined' && localStorage.getItem('avora_is_seller') === 'true' && (
+                    <>
+                      <Link href='/seller_dashboard?tab=notes' className="dropdown-link" onClick={() => setProfileOpen(false)}>📝 My Notes</Link>
+                      <Link href="/seller_dashboard" className="dropdown-link" onClick={() => setProfileOpen(false)}>🏪 My Store</Link>
+                    </>
+                  )}
+                  <Link href="/wallet" className="dropdown-link" onClick={() => setProfileOpen(false)}>💰 My Wallet</Link>
                   <button onClick={logout} style={{
-                    display: 'block', width: '100%',
-                    padding: '0.75rem 1rem', fontSize: '0.65rem',
-                    color: '#c0392b', background: 'none', border: 'none',
-                    textAlign: 'left', cursor: 'pointer', letterSpacing: '0.03em',
+                    display: 'block', width: '100%', padding: '0.8rem 1.2rem', 
+                    fontSize: '0.7rem', fontWeight: '700', color: '#c0392b', 
+                    background: 'none', border: 'none', textAlign: 'left', 
+                    cursor: 'pointer', letterSpacing: '0.05em', textTransform: 'uppercase'
                   }}>🚪 Log Out</button>
                 </div>
               )}
             </div>
           ) : (
-            <>
-              <Link href="/signup" style={{ textDecoration: 'none' }}>
-                <button style={{
-                  background: '#0a0a0a', color: '#fafafa', border: 'none',
-                  padding: '0.55rem 1.2rem', fontFamily: 'Arial, sans-serif',
-                  fontSize: '0.6rem', fontWeight: '600',
-                  letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer',
-                }}>Sign Up</button>
-              </Link>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
               <Link href="/login" style={{ textDecoration: 'none' }}>
                 <button style={{
                   background: 'transparent', color: '#0a0a0a',
                   border: '0.5px solid rgba(0,0,0,0.15)',
-                  padding: '0.55rem 1.2rem', fontFamily: 'Arial, sans-serif',
-                  fontSize: '0.6rem', letterSpacing: '0.2em',
-                  textTransform: 'uppercase', cursor: 'pointer',
+                  padding: '0.5rem 1rem', fontSize: '0.6rem',
+                  letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer',
                 }}>Log In</button>
               </Link>
-            </>
+              <Link href="/signup" style={{ textDecoration: 'none' }}>
+                <button style={{
+                  background: '#0a0a0a', color: '#fafafa', border: 'none',
+                  padding: '0.5rem 1rem', fontSize: '0.6rem',
+                  letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer',
+                }}>Sign Up</button>
+              </Link>
+            </div>
           )}
         </div>
       </nav>
+
+      {/* MOBILE SEARCH (Visible only on small screens) */}
+      <div className="mobile-search-bar">
+        <SearchInput 
+          query={query} 
+          setQuery={setQuery} 
+          onSearch={handleSearch} 
+          onKeyDown={handleKeyDown} 
+        />
+      </div>
     </>
   )
 }
 
-function NavIconBtn({ children, title, onClick }) {
+/* Reusable Components to keep the main block clean */
+
+function SearchInput({ query, setQuery, onSearch, onKeyDown }) {
   return (
-    <button title={title} onClick={onClick} style={{
+    <div style={{ position: 'relative', width: '100%' }}>
+      <input
+        type="text"
+        placeholder="Search Avora..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={onKeyDown}
+        style={{
+          width: '100%',
+          padding: '0.6rem 2.5rem 0.6rem 1rem',
+          border: '0.5px solid rgba(0,0,0,0.1)',
+          background: '#f5f3ee',
+          fontSize: '0.75rem',
+          color: '#0a0a0a',
+          outline: 'none',
+          borderRadius: '2px',
+          boxSizing: 'border-box',
+        }}
+      />
+      <button onClick={onSearch} style={{
+        position: 'absolute', right: 0, top: 0, bottom: 0,
+        width: '40px', background: '#0a0a0a', border: 'none',
+        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+      }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fafafa" strokeWidth="2">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+      </button>
+    </div>
+  )
+}
+
+function NavIconBtn({ children, title, href }) {
+  return (
+    <Link href={href || "#"} title={title} style={{
       width: '36px', height: '36px',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      border: '0.5px solid rgba(0,0,0,0.09)',
-      background: 'transparent', cursor: 'pointer',
+      border: '0.5px solid rgba(0,0,0,0.06)',
+      background: 'transparent', textDecoration: 'none'
     }}>
       {children}
-    </button>
+    </Link>
   )
 }

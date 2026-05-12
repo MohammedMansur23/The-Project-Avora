@@ -194,7 +194,7 @@ export default function Marketplace() {
               Open your store in minutes — it's free.
             </p>
           </div>
-          <a href="#" style={{
+          <a href="/open-a-store" style={{
             background: '#C9A84C', color: '#0a0a0a',
             padding: '0.6rem 1.5rem', fontSize: '0.55rem',
             letterSpacing: '0.2em', textTransform: 'uppercase',
@@ -263,11 +263,17 @@ export default function Marketplace() {
                   overflow: 'hidden',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  <div style={{
-                    fontSize: '3.5rem',
-                    transform: hoveredId === product.id ? 'scale(1.25)' : 'scale(1)',
-                    transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
-                  }}>{product.emoji}</div>
+                  <div style={{ background: '#f5f3ee', height: '160px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {product.image ? (
+                      <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{
+                        fontSize: '3.5rem',
+                        transform: hoveredId === product.id ? 'scale(1.25)' : 'scale(1)',
+                        transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                      }}>{product.emoji}</div>
+                    )}
+                  </div>
                 </div>
 
                 <div style={{ padding: '1rem' }}>
