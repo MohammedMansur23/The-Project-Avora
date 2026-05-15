@@ -8,7 +8,7 @@ export default function Navbar() {
   const [query, setQuery] = useState('')
   const [profileOpen, setProfileOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  
+
   const { user, logout } = useAuth()
   const { cartTotal } = useCart()
 
@@ -107,11 +107,11 @@ export default function Navbar() {
 
         {/* SEARCH BAR (Desktop Only) */}
         <div className="search-wrapper">
-          <SearchInput 
-            query={query} 
-            setQuery={setQuery} 
-            onSearch={handleSearch} 
-            onKeyDown={handleKeyDown} 
+          <SearchInput
+            query={query}
+            setQuery={setQuery}
+            onSearch={handleSearch}
+            onKeyDown={handleKeyDown}
           />
         </div>
 
@@ -120,7 +120,7 @@ export default function Navbar() {
           {/* Inbox Icon */}
           <NavIconBtn title="Inbox" href="/inbox">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="1.5">
-              <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+              <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
             </svg>
           </NavIconBtn>
 
@@ -153,9 +153,9 @@ export default function Navbar() {
                   )}
                   <Link href="/wallet" className="dropdown-link" onClick={() => setProfileOpen(false)}>💰 My Wallet</Link>
                   <button onClick={logout} style={{
-                    display: 'block', width: '100%', padding: '0.8rem 1.2rem', 
-                    fontSize: '0.7rem', fontWeight: '700', color: '#c0392b', 
-                    background: 'none', border: 'none', textAlign: 'left', 
+                    display: 'block', width: '100%', padding: '0.8rem 1.2rem',
+                    fontSize: '0.7rem', fontWeight: '700', color: '#c0392b',
+                    background: 'none', border: 'none', textAlign: 'left',
                     cursor: 'pointer', letterSpacing: '0.05em', textTransform: 'uppercase'
                   }}>🚪 Log Out</button>
                 </div>
@@ -185,11 +185,11 @@ export default function Navbar() {
 
       {/* MOBILE SEARCH (Visible only on small screens) */}
       <div className="mobile-search-bar">
-        <SearchInput 
-          query={query} 
-          setQuery={setQuery} 
-          onSearch={handleSearch} 
-          onKeyDown={handleKeyDown} 
+        <SearchInput
+          query={query}
+          setQuery={setQuery}
+          onSearch={handleSearch}
+          onKeyDown={handleKeyDown}
         />
       </div>
     </>
@@ -225,7 +225,7 @@ function SearchInput({ query, setQuery, onSearch, onKeyDown }) {
         cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fafafa" strokeWidth="2">
-          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
         </svg>
       </button>
     </div>

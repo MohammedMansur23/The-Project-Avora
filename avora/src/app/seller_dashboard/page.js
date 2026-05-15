@@ -43,7 +43,7 @@ export default function SellerDashboard() {
   const [addingProduct, setAddingProduct] = useState(false)
   const [editingStore, setEditingStore] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-  const [newProduct, setNewProduct] = useState({ name: '', price: '', category: 'Food & Drinks', emoji: '📦' })
+  const [newProduct, setNewProduct] = useState({ name: '', price: '', category: 'Food & Drinks', image: '' })
   const [productImageFile, setProductImageFile] = useState(null)
   const [productImagePreview, setProductImagePreview] = useState('')
   const [addingNote, setAddingNote] = useState(false)
@@ -91,8 +91,12 @@ export default function SellerDashboard() {
   }
 
   const addProduct = async () => {
-    if (!newProduct.name || !newProduct.price) {
-      showToast('⚠️ Please fill in name and price')
+    if (!newProduct.name) {
+      showToast('⚠️ Please fill in name')
+      return
+    }
+    if (!newProduct.price) {
+      showToast('⚠️ Please fill in price')
       return
     }
     try {
@@ -105,7 +109,6 @@ export default function SellerDashboard() {
         name: newProduct.name,
         price: parseInt(newProduct.price),
         category: newProduct.category,
-        emoji: newProduct.emoji || '📦',
         image: imageUrl,
         active: true,
         orders: 0,
@@ -115,7 +118,7 @@ export default function SellerDashboard() {
       }
       const id = await addProductDB(user.uid, productData)
       setProducts(prev => [{ id, ...productData }, ...prev])
-      setNewProduct({ name: '', price: '', category: 'Food & Drinks', emoji: '📦' })
+      setNewProduct({ name: '', price: '', category: 'Food & Drinks', image: '' })
       setProductImageFile(null)
       setProductImagePreview('')
       setAddingProduct(false)
@@ -390,11 +393,10 @@ export default function SellerDashboard() {
               <div className="card" style={{ border: '0.5px solid #C9A84C' }}>
                 <h3 style={{ fontFamily: 'Georgia, serif', fontSize: '1rem', marginBottom: '1rem' }}>Add New Product</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.8rem', marginBottom: '1rem' }}>
-                  <input placeholder="Name *" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} style={inputStyle} />
-                  <input placeholder="Price (₦) *" type="number" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} style={inputStyle} />
-                  <input placeholder="Emoji e.g. 🍲" value={newProduct.emoji} onChange={e => setNewProduct({...newProduct, emoji: e.target.value})} style={inputStyle} />
-                  <select value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} style={inputStyle}>
-                    {['Food & Drinks','Fashion','Electronics','Books','Beauty & Hair','Repairs','Printing','Footwear','Tutoring','Laundry','Photography','Second-hand'].map(c => <option key={c}>{c}</option>)}
+                  <input placeholder="Name *" value={newProduct.name} onChange={e => setNewProduct({ ...newProduct, name: e.target.value })} style={inputStyle} />
+                  <input placeholder="Price (₦) *" type="number" value={newProduct.price} onChange={e => setNewProduct({ ...newProduct, price: e.target.value })} style={inputStyle} />
+                  <select value={newProduct.category} onChange={e => setNewProduct({ ...newProduct, category: e.target.value })} style={inputStyle}>
+                    {['Food & Drinks', 'Fashion', 'Electronics', 'Books', 'Beauty & Hair', 'Repairs', 'Printing', 'Footwear', 'Tutoring', 'Laundry', 'Photography', 'Second-hand'].map(c => <option key={c}>{c}</option>)}
                   </select>
                 </div>
 
@@ -466,18 +468,18 @@ export default function SellerDashboard() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.5rem', color: '#6a6a6a', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.3rem' }}>Customer Name *</label>
-                    <input placeholder="e.g. Amina Bello" value={newNote.customerName} onChange={e => setNewNote({...newNote, customerName: e.target.value})} style={inputStyle} />
+                    <input placeholder="e.g. Amina Bello" value={newNote.customerName} onChange={e => setNewNote({ ...newNote, customerName: e.target.value })} style={inputStyle} />
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.5rem', color: '#6a6a6a', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.3rem' }}>Phone / WhatsApp</label>
-                    <input placeholder="e.g. 08012345678" value={newNote.phone} onChange={e => setNewNote({...newNote, phone: e.target.value})} style={inputStyle} />
+                    <input placeholder="e.g. 08012345678" value={newNote.phone} onChange={e => setNewNote({ ...newNote, phone: e.target.value })} style={inputStyle} />
                   </div>
                 </div>
                 <div style={{ marginBottom: '0.75rem' }}>
                   <label style={{ display: 'block', fontSize: '0.5rem', color: '#6a6a6a', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.3rem' }}>Tag</label>
                   <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                     {Object.entries(TAG_CONFIG).map(([key, val]) => (
-                      <button key={key} onClick={() => setNewNote({...newNote, tag: key})} style={{
+                      <button key={key} onClick={() => setNewNote({ ...newNote, tag: key })} style={{
                         padding: '0.35rem 0.8rem', fontSize: '0.55rem', fontWeight: '700',
                         letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer',
                         background: newNote.tag === key ? val.bg : 'transparent',
@@ -489,7 +491,7 @@ export default function SellerDashboard() {
                 </div>
                 <div style={{ marginBottom: '1rem' }}>
                   <label style={{ display: 'block', fontSize: '0.5rem', color: '#6a6a6a', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.3rem' }}>Note *</label>
-                  <textarea placeholder="e.g. Always pays on time..." value={newNote.content} onChange={e => setNewNote({...newNote, content: e.target.value})} style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }} />
+                  <textarea placeholder="e.g. Always pays on time..." value={newNote.content} onChange={e => setNewNote({ ...newNote, content: e.target.value })} style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }} />
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button onClick={addNote} className="btn-primary">Save Note</button>
@@ -578,9 +580,9 @@ export default function SellerDashboard() {
                   <label style={{ display: 'block', fontSize: '0.5rem', color: '#6a6a6a', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.3rem' }}>{key}</label>
                   {editingStore ? (
                     key === 'description' ? (
-                      <textarea value={storeInfo[key] || ''} onChange={e => setStoreInfo({...storeInfo, [key]: e.target.value})} style={{ ...inputStyle, minHeight: '70px', resize: 'vertical' }} />
+                      <textarea value={storeInfo[key] || ''} onChange={e => setStoreInfo({ ...storeInfo, [key]: e.target.value })} style={{ ...inputStyle, minHeight: '70px', resize: 'vertical' }} />
                     ) : (
-                      <input value={storeInfo[key] || ''} onChange={e => setStoreInfo({...storeInfo, [key]: e.target.value})} style={inputStyle} />
+                      <input value={storeInfo[key] || ''} onChange={e => setStoreInfo({ ...storeInfo, [key]: e.target.value })} style={inputStyle} />
                     )
                   ) : (
                     <p style={{ fontSize: '0.8rem', fontWeight: '600', paddingBottom: '0.4rem', borderBottom: '0.5px solid #eee' }}>{storeInfo[key] || '—'}</p>
